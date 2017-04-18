@@ -11,7 +11,7 @@ public class Battleship {
     	int col = 0;
     	char direction = 0;
     	
-    	while(Game.getShipNum() != 0){
+    	while(Game.getShipNum() != 4){
     		System.out.print("Enter the row to place your " + Game.GetShip() + ": ");
     		row = keyboard.nextInt();
     		
@@ -24,14 +24,16 @@ public class Battleship {
     		
     		System.out.println();
     		Game.AddShip(playerBoard, direction, row, col);
+    		Game.getError();
     		Game.Print(playerBoard);
     	}
     	
-    	/*Game = new GameBoard();
+    	Game = new GameBoard();
     	int aiBoard[][] = Game.Create();
     	Ai Cp = new Ai();
     	Cp.placeShips(aiBoard, Game);
-    	Game.Print(aiBoard);*/
+    	Game.Print(aiBoard);
+    	
     	keyboard.close();
     }
 }

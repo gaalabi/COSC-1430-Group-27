@@ -9,10 +9,17 @@ private int rowSize;
 private int colSize;
 private int placementFail;
 private int valid;
+private int errorNum;
 
 public String GetShip(){ return ships[0]; }
 public int validPlacement(){ return placementFail; }
 public int getShipNum(){ return shipNum; }
+public int getValid(){ return valid; }
+
+public int getShipSize(){
+	DetermineShip();
+	return shipSize;
+}
 
 public GameBoard(){
 	ships = new String[] {"Carrier","Battleship","Cruiser","Submarine","Destroyer"};
@@ -23,6 +30,7 @@ public GameBoard(){
 	shipNum = 5;
 	placementFail = 0;
 	valid = 0;
+	errorNum = 0;
 }
 
 public int[][] Create(){
@@ -45,15 +53,26 @@ public void Print(int arr[][]){
     }    
     System.out.println("\n");
 }
-
+public void getError(){
+	if(errorNum == 0){
+		System.out.print("");
+	}
+	else if(errorNum == 1){
+		System.out.println("You ship is out of the board. Please Enter in new values.");
+	}
+	else if(errorNum == 2){
+		System.out.println("You ship overlaps another ship. Please enter in new values.");
+	}
+}
 public void overlapCheck(int[][] arr, char direction, int row, int col){
 	//checks if ship placement overlap other ships
+	valid = 1;
 	switch(direction){
 		case 'u':
 			for(int y = row; y > row - shipSize; y--){
 				if(arr[y-1][col-1] != 0){
 					valid = 0;
-					System.out.println("You ship overlaps another ship. Please enter in new values.");
+					errorNum = 2;
 					break;
 				}
 			}
@@ -62,7 +81,7 @@ public void overlapCheck(int[][] arr, char direction, int row, int col){
 			for(int y = row; y < row + shipSize; y++){
 				if(arr[y-1][col-1] != 0){
 					valid = 0;
-					System.out.println("You ship overlaps another ship. Please enter in new values.");
+					errorNum = 2;
 					break;
 				}
 			}
@@ -71,7 +90,7 @@ public void overlapCheck(int[][] arr, char direction, int row, int col){
 			for(int x = col; x > col - shipSize; x--){
 				if(arr[row - 1][x-1] != 0){
 					valid = 0;
-					System.out.println("You ship overlaps another ship. Please enter in new values.");
+					errorNum = 2;
 					break;
 				}
 			}
@@ -80,7 +99,7 @@ public void overlapCheck(int[][] arr, char direction, int row, int col){
 			for(int x = col; x < col + shipSize; x++){
 				if(arr[row-1][x-1] != 0){
 					valid = 0;
-					System.out.println("You ship overlaps another ship. Please enter in new values.");
+					errorNum = 2;
 					break;
 				}
 			}
@@ -92,32 +111,29 @@ public void overlapCheck(int[][] arr, char direction, int row, int col){
 }
 public void placementCheck(int arr [][], char direction, int row, int col, int shipSize){
 	//checks if chosen row and column is inside the board
+	valid = 1;
 	if(row > 0 && row <= rowSize && col > 0 && col <= colSize){
 		
 		//checks if ship placement is out of bounds
 		if(direction == 'u' && (row-shipSize >= 0)){
-			valid = 1;
 			overlapCheck(arr, direction, row, col);
 		}
 		else if(direction == 'd' && (rowSize-(shipSize-1) >= row)){
-			valid = 1;
 			overlapCheck(arr, direction, row, col);
 		}
 		else if(direction == 'l' && (col-shipSize >= 0)){
-			valid = 1;
 			overlapCheck(arr, direction, row, col);
 		}
 		else if(direction == 'r' && (colSize-(shipSize-1) >= col)){
-			valid = 1;
 			overlapCheck(arr, direction, row, col);
 		}
 		else{
-			System.out.println("You ship is out of the board. Please Enter in new values.");
+			errorNum = 1;
 			valid = 0;
 		}	
 	}	
 	else{
-		System.out.println("You ship is out of the board. Please Enter in new values.");
+		errorNum = 1;
 		valid = 0;
 	}
 }
@@ -194,6 +210,7 @@ public void shipsResize(){
 
 public int[][] AddShip(int arr[][], char direction, int row, int col){
 	//If the valid passes, then decide what ship to place
+	errorNum = 0;
 	placementFail = 0;
 	DetermineShip();
 	placementCheck(arr, direction, row, col, shipSize);
