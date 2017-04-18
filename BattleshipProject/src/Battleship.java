@@ -11,7 +11,7 @@ public class Battleship {
     	int col = 0;
     	char direction = 0;
     	
-    	while(Game.getShipNum() != 4){
+    	while(Game.getShipNum() != 5){
     		System.out.print("Enter the row to place your " + Game.GetShip() + ": ");
     		row = keyboard.nextInt();
     		

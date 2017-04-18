@@ -15,6 +15,8 @@ public String GetShip(){ return ships[0]; }
 public int validPlacement(){ return placementFail; }
 public int getShipNum(){ return shipNum; }
 public int getValid(){ return valid; }
+public int getRowSize(){ return rowSize; }
+public int getColSize(){ return colSize; }
 
 public int getShipSize(){
 	DetermineShip();
@@ -49,10 +51,11 @@ public void Print(int arr[][]){
             System.out.print(arr[row][col]+"  ");
            
         }
-    System.out.println();
-    }    
+        System.out.println();
+    }
     System.out.println("\n");
 }
+
 public void getError(){
 	if(errorNum == 0){
 		System.out.print("");
@@ -64,6 +67,106 @@ public void getError(){
 		System.out.println("You ship overlaps another ship. Please enter in new values.");
 	}
 }
+
+public int[][] AddShip(int arr[][], char direction, int row, int col){
+	//If the valid passes, then decide what ship to place
+	errorNum = 0;
+	placementFail = 0;
+	DetermineShip();
+	placementCheck(arr, direction, row, col, shipSize);
+	if(valid == 1){
+		switch (ships[0]){
+			case "Carrier":
+				placeShip(arr, direction, row, col);
+				shipsResize();
+				break;
+			case "Battleship":
+				placeShip(arr, direction, row, col);
+				shipsResize();
+				break;
+			case "Cruiser":
+				placeShip(arr, direction, row, col);
+				shipsResize();
+				break;
+			case "Submarine":
+				placeShip(arr, direction, row, col);
+				shipsResize();
+				break;
+			case "Destroyer":
+				placeShip(arr, direction, row, col);
+				shipsResize();
+				break;
+			default:
+				placementFail = 1;
+				return arr;
+		}
+		return arr;
+	}
+	else{
+		placementFail = 1;
+		return arr;
+	}
+}
+
+public void DetermineShip(){
+	//Determine the next ship type and size
+	switch (ships[0]){
+		case "Carrier":
+			shipType = 1;
+			shipSize = 5;
+			break;
+		case "Battleship":
+			shipType = 2;
+			shipSize = 4;
+			break;
+		case "Cruiser":
+			shipType = 3;
+			shipSize = 3;
+			break;
+		case "Submarine":
+			shipType = 4;
+			shipSize = 3;
+			break;
+		case "Destroyer":
+			shipType = 5;
+			shipSize = 2;
+			break;
+		default:
+			shipType = 0;
+			shipSize = 0;
+			break;
+	}
+}
+
+public void placementCheck(int arr [][], char direction, int row, int col, int shipSize){
+	//checks if chosen row and column is inside the board
+	valid = 1;
+	if(row > 0 && row <= rowSize && col > 0 && col <= colSize){
+		
+		//checks if ship placement is out of bounds
+		if(direction == 'u' && (row-shipSize >= 0)){
+			overlapCheck(arr, direction, row, col);
+		}
+		else if(direction == 'd' && (rowSize-(shipSize-1) >= row)){
+			overlapCheck(arr, direction, row, col);
+		}
+		else if(direction == 'l' && (col-shipSize >= 0)){
+			overlapCheck(arr, direction, row, col);
+		}
+		else if(direction == 'r' && (colSize-(shipSize-1) >= col)){
+			overlapCheck(arr, direction, row, col);
+		}
+		else{
+			errorNum = 1;
+			valid = 0;
+		}	
+	}	
+	else{
+		errorNum = 1;
+		valid = 0;
+	}
+}
+
 public void overlapCheck(int[][] arr, char direction, int row, int col){
 	//checks if ship placement overlap other ships
 	valid = 1;
@@ -109,34 +212,6 @@ public void overlapCheck(int[][] arr, char direction, int row, int col){
 			break;
 	}
 }
-public void placementCheck(int arr [][], char direction, int row, int col, int shipSize){
-	//checks if chosen row and column is inside the board
-	valid = 1;
-	if(row > 0 && row <= rowSize && col > 0 && col <= colSize){
-		
-		//checks if ship placement is out of bounds
-		if(direction == 'u' && (row-shipSize >= 0)){
-			overlapCheck(arr, direction, row, col);
-		}
-		else if(direction == 'd' && (rowSize-(shipSize-1) >= row)){
-			overlapCheck(arr, direction, row, col);
-		}
-		else if(direction == 'l' && (col-shipSize >= 0)){
-			overlapCheck(arr, direction, row, col);
-		}
-		else if(direction == 'r' && (colSize-(shipSize-1) >= col)){
-			overlapCheck(arr, direction, row, col);
-		}
-		else{
-			errorNum = 1;
-			valid = 0;
-		}	
-	}	
-	else{
-		errorNum = 1;
-		valid = 0;
-	}
-}
 
 public int[][] placeShip(int arr[][], char direction, int row, int col){
 	//Places the ship on the board in a certain direction
@@ -168,36 +243,6 @@ public int[][] placeShip(int arr[][], char direction, int row, int col){
 	return arr;
 }
 
-public void DetermineShip(){
-	//Determine the next ship type and size
-	switch (ships[0]){
-		case "Carrier":
-			shipType = 1;
-			shipSize = 5;
-			break;
-		case "Battleship":
-			shipType = 2;
-			shipSize = 4;
-			break;
-		case "Cruiser":
-			shipType = 3;
-			shipSize = 3;
-			break;
-		case "Submarine":
-			shipType = 2;
-			shipSize = 3;
-			break;
-		case "Destroyer":
-			shipType = 5;
-			shipSize = 2;
-			break;
-		default:
-			shipType = 0;
-			shipSize = 0;
-			break;
-	}
-}
-
 public void shipsResize(){
 	//Go to the next ship on the list
 	String newShips[] = new String[ships.length-1];
@@ -206,45 +251,5 @@ public void shipsResize(){
 	}
 	ships = newShips.clone();
 	shipNum--;
-}
-
-public int[][] AddShip(int arr[][], char direction, int row, int col){
-	//If the valid passes, then decide what ship to place
-	errorNum = 0;
-	placementFail = 0;
-	DetermineShip();
-	placementCheck(arr, direction, row, col, shipSize);
-	if(valid == 1){
-		switch (ships[0]){
-			case "Carrier":
-				placeShip(arr, direction, row, col);
-				shipsResize();
-				break;
-			case "Battleship":
-				placeShip(arr, direction, row, col);
-				shipsResize();
-				break;
-			case "Cruiser":
-				placeShip(arr, direction, row, col);
-				shipsResize();
-				break;
-			case "Submarine":
-				placeShip(arr, direction, row, col);
-				shipsResize();
-				break;
-			case "Destroyer":
-				placeShip(arr, direction, row, col);
-				shipsResize();
-				break;
-			default:
-				placementFail = 1;
-				return arr;
-		}
-		return arr;
-	}
-	else{
-		placementFail = 1;
-		return arr;
-	}
 }
 }
