@@ -1,3 +1,4 @@
+import java.util.Random;
 import java.util.Scanner;
 
 public class Battleship {
@@ -5,7 +6,7 @@ public class Battleship {
         
     	GameBoard Game = new GameBoard();
     	int playerBoard[][] = Game.Create();
-    	Scanner keyboard = new Scanner(System.in);
+		Scanner keyboard = new Scanner(System.in);
     	int row = 0;
     	int col = 0;
     	char direction = 0;
@@ -25,5 +26,12 @@ public class Battleship {
     		Game.AddShip(playerBoard, direction, row, col);
     		Game.Print(playerBoard);
     	}
+    	
+    	/*Game = new GameBoard();
+    	int aiBoard[][] = Game.Create();
+    	Ai Cp = new Ai();
+    	Cp.placeShips(aiBoard, Game);
+    	Game.Print(aiBoard);*/
+    	keyboard.close();
     }
 }

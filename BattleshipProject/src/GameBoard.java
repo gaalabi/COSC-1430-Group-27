@@ -8,9 +8,10 @@ private String ships[];
 private int rowSize;
 private int colSize;
 private int placementFail;
+private int valid;
 
 public String GetShip(){ return ships[0]; }
-public int checkPlacement(){ return placementFail; }
+public int validPlacement(){ return placementFail; }
 public int getShipNum(){ return shipNum; }
 
 public GameBoard(){
@@ -21,6 +22,7 @@ public GameBoard(){
 	colSize = 10;
 	shipNum = 5;
 	placementFail = 0;
+	valid = 0;
 }
 
 public int[][] Create(){
@@ -44,38 +46,13 @@ public void Print(int arr[][]){
     System.out.println("\n");
 }
 
-public int placementCheck(int arr [][], char direction, int row, int col, int shipSize){
-	//Checks if ship placement is out of bounds
-	int check = 0;
-	if(row >=0 && row <= rowSize && col >= 0 && col <= colSize){
-		if(direction == 'u' && (row-shipSize >= 0)){
-			check = 1;
-		}
-		else if(direction == 'd' && (rowSize-(shipSize-1) >= row)){
-			check = 1;
-		}
-		else if(direction == 'l' && (col-shipSize >= 0)){
-			check = 1;
-		}
-		else if(direction == 'r' && (colSize-(shipSize-1) >= col)){
-			check = 1;
-		}
-		else{
-			System.out.println("You ship is out of the board. Please Enter in new values.");
-			check = 0;
-		}
-	}	
-	else{
-		System.out.println("You ship is out of the board. Please Enter in new values.");
-		check = 0;
-		return check;
-	}
-	//Checks if ship placement overlap other ships
+public void overlapCheck(int[][] arr, char direction, int row, int col){
+	//checks if ship placement overlap other ships
 	switch(direction){
 		case 'u':
 			for(int y = row; y > row - shipSize; y--){
 				if(arr[y-1][col-1] != 0){
-					check = 0;
+					valid = 0;
 					System.out.println("You ship overlaps another ship. Please enter in new values.");
 					break;
 				}
@@ -84,7 +61,7 @@ public int placementCheck(int arr [][], char direction, int row, int col, int sh
 		case 'd':
 			for(int y = row; y < row + shipSize; y++){
 				if(arr[y-1][col-1] != 0){
-					check = 0;
+					valid = 0;
 					System.out.println("You ship overlaps another ship. Please enter in new values.");
 					break;
 				}
@@ -93,7 +70,7 @@ public int placementCheck(int arr [][], char direction, int row, int col, int sh
 		case 'l':
 			for(int x = col; x > col - shipSize; x--){
 				if(arr[row - 1][x-1] != 0){
-					check = 0;
+					valid = 0;
 					System.out.println("You ship overlaps another ship. Please enter in new values.");
 					break;
 				}
@@ -102,18 +79,47 @@ public int placementCheck(int arr [][], char direction, int row, int col, int sh
 		case 'r':
 			for(int x = col; x < col + shipSize; x++){
 				if(arr[row-1][x-1] != 0){
-					check = 0;
+					valid = 0;
 					System.out.println("You ship overlaps another ship. Please enter in new values.");
 					break;
 				}
 			}
 			break;
 		default:
-			check = 0;
+			valid = 0;
 			break;
 	}
-	
-	return check;
+}
+public void placementCheck(int arr [][], char direction, int row, int col, int shipSize){
+	//checks if chosen row and column is inside the board
+	if(row > 0 && row <= rowSize && col > 0 && col <= colSize){
+		
+		//checks if ship placement is out of bounds
+		if(direction == 'u' && (row-shipSize >= 0)){
+			valid = 1;
+			overlapCheck(arr, direction, row, col);
+		}
+		else if(direction == 'd' && (rowSize-(shipSize-1) >= row)){
+			valid = 1;
+			overlapCheck(arr, direction, row, col);
+		}
+		else if(direction == 'l' && (col-shipSize >= 0)){
+			valid = 1;
+			overlapCheck(arr, direction, row, col);
+		}
+		else if(direction == 'r' && (colSize-(shipSize-1) >= col)){
+			valid = 1;
+			overlapCheck(arr, direction, row, col);
+		}
+		else{
+			System.out.println("You ship is out of the board. Please Enter in new values.");
+			valid = 0;
+		}	
+	}	
+	else{
+		System.out.println("You ship is out of the board. Please Enter in new values.");
+		valid = 0;
+	}
 }
 
 public int[][] placeShip(int arr[][], char direction, int row, int col){
@@ -187,11 +193,11 @@ public void shipsResize(){
 }
 
 public int[][] AddShip(int arr[][], char direction, int row, int col){
-	//If the check passes, then decide what ship to place
+	//If the valid passes, then decide what ship to place
 	placementFail = 0;
 	DetermineShip();
-	int check = placementCheck(arr, direction, row, col, shipSize);
-	if(check == 1){
+	placementCheck(arr, direction, row, col, shipSize);
+	if(valid == 1){
 		switch (ships[0]){
 			case "Carrier":
 				placeShip(arr, direction, row, col);
