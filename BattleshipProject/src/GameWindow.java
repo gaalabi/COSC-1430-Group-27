@@ -7,7 +7,7 @@ import java.awt.event.MouseWheelListener;
 import javax.swing.*;
 
 public class GameWindow extends JFrame implements MouseWheelListener {
-	private int row, col, shipSize, shipType, validPlacement, cbrow, cbcol, onBoard;
+	private int row, col, shipSize, shipType, shipNum, validPlacement, cbrow, cbcol, onBoard;
 	private JPanel PlayerBoard = new JPanel();
 	private JPanel AiBoard = new JPanel();
 	private JPanel GameInfo = new JPanel();
@@ -19,6 +19,7 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 	
 	public char getDirection(){ return direction; }
 	public int getShipType(){ return shipType; }
+	public int getShipNum(){ return shipNum; }
 	public void setOnBoard(){
 		if(onBoard == 1){
 			onBoard = 0;
@@ -100,6 +101,7 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 		playerBoard.DetermineShip();
 		shipType = playerBoard.getShipType();
 		shipSize = playerBoard.getShipSize();
+		shipNum = playerBoard.getShipNum();
 	}
 	
 	public void showShip(int r, int c){
@@ -144,40 +146,49 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 	
 	public void placeShip(int r, int c){
 		int shipPart = 1;
-		//playerBoard.AddShip(arr, direction, r, c);
-		switch(direction){
-		case 'u':
-			for(int y = r; y > r - shipSize; y--){
-				if(y-1<10 && c-1<10 && y-1>=0 && c-1>=0){
-					pbutton[y-1][c-1].drawShipPart(shipPart, shipType, direction);
-					shipPart++;
+		playerBoard.AddShip(direction, r, c);
+		
+		if(playerBoard.getValid() == 1){		
+			switch(direction){
+			case 'u':
+				for(int y = r; y > r - shipSize; y--){
+					if(y-1<10 && c-1<10 && y-1>=0 && c-1>=0){
+						pbutton[y-1][c-1].drawShipPart(shipPart, shipType, direction);
+						pbutton[y-1][c-1].setCurrent(pbutton[y-1][c-1].getRotImage());
+						shipPart++;
+					}
 				}
-			}
-			break;
-		case 'd':
-			for(int y = r; y < r + shipSize; y++){
-				if(y-1<10 && c-1<10 && y-1>=0 && c-1>=0){
-					pbutton[y-1][c-1].drawShipPart(shipPart, shipType, direction);
-					shipPart++;
+				break;
+			case 'd':
+				for(int y = r; y < r + shipSize; y++){
+					if(y-1<10 && c-1<10 && y-1>=0 && c-1>=0){
+						pbutton[y-1][c-1].drawShipPart(shipPart, shipType, direction);
+						pbutton[y-1][c-1].setCurrent(pbutton[y-1][c-1].getRotImage());
+						shipPart++;
+					}
 				}
-			}
-			break;
-		case 'l':
-			for(int x = c; x > c - shipSize; x--){
-				if(r-1<10 && x-1<10 && r-1>=0 && x-1>=0){
-					pbutton[r-1][x-1].drawShipPart(shipPart, shipType, direction);					
-					shipPart++;					
+				break;
+			case 'l':
+				for(int x = c; x > c - shipSize; x--){
+					if(r-1<10 && x-1<10 && r-1>=0 && x-1>=0){
+						pbutton[r-1][x-1].drawShipPart(shipPart, shipType, direction);
+						pbutton[r-1][x-1].setCurrent(pbutton[r-1][x-1].getRotImage());
+						shipPart++;					
+					}
 				}
-			}
-			break;
-		case 'r':
-			for(int x = c; x < c + shipSize; x++){
-				if(r-1<10 && x-1<10 && r-1>=0 && x-1>=0){
-					pbutton[r-1][x-1].drawShipPart(shipPart, shipType, direction);
-					shipPart++;
+				break;
+			case 'r':
+				for(int x = c; x < c + shipSize; x++){
+					if(r-1<10 && x-1<10 && r-1>=0 && x-1>=0){
+						pbutton[r-1][x-1].drawShipPart(shipPart, shipType, direction);
+						pbutton[r-1][x-1].setCurrent(pbutton[r-1][x-1].getRotImage());
+						shipPart++;
+					}
 				}
+				break;
 			}
-			break;
+			setShipInfo();
+			playerBoard.Print();
 		}
 	}
 	

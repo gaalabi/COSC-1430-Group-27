@@ -97,7 +97,8 @@ public class GameBoard {
 	
 	public void DetermineShip(){
 		//Determine the next ship type and size
-		switch (ships[0]){
+		if(ships.length > 0){
+			switch (ships[0]){
 			case "Carrier":
 				shipType = 1;
 				shipSize = 5;
@@ -122,9 +123,14 @@ public class GameBoard {
 				shipType = 0;
 				shipSize = 0;
 				break;
+			}
+		}
+		else{
+			shipType = 0;
+			shipSize = 0;
 		}
 	}
-	
+
 	public void placementCheck(char direction, int row, int col, int shipSize){
 		//checks if chosen row and column is inside the board
 		if(row > 0 && row <= rowSize && col > 0 && col <= colSize){

@@ -17,6 +17,8 @@ public class PlayerButton extends JButton implements ActionListener, MouseListen
 	private int rLoc, cLoc;
 	private GameWindow window;
 	
+	public ImageIcon getRotImage(){ return rotImage; }
+	
 	public PlayerButton(GameWindow frame, int r, int c){
 		addMouseListener(this);
 		addActionListener(this);
@@ -150,6 +152,9 @@ public class PlayerButton extends JButton implements ActionListener, MouseListen
 				break;
 			}
 			break;
+		default:
+			rotImage = waves;
+			break;
 		}
 	}
 	
@@ -157,10 +162,14 @@ public class PlayerButton extends JButton implements ActionListener, MouseListen
 		setIcon(current);
 	}
 	
+	public void setCurrent(ImageIcon newImage){
+		current = newImage;
+	}
+	
 	public void actionPerformed(ActionEvent e) {
-		window.placeShip(rLoc, cLoc);
-		current = red;
-		window.setShipInfo();
+		if(window.getShipNum() > 0){
+			window.placeShip(rLoc, cLoc);
+		}
 	}
 	
 	public void mouseClicked(MouseEvent e) {
