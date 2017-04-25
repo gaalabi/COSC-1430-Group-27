@@ -1,7 +1,7 @@
 
 public class GameBoard {
 	
-	private int shipSize, shipType, shipNum, rowSize, colSize, valid, errorNum;
+	private int shipSize, shipType, shipNum, rowSize, colSize, valid, errorNum, arr[][];
 	private String ships[];
 	
 	public String GetShip(){ return ships[0]; }
@@ -10,6 +10,7 @@ public class GameBoard {
 	public int getRowSize(){ return rowSize; }
 	public int getColSize(){ return colSize; }
 	public int getShipType(){ return shipType; }
+	public int[][] getBoard(){ return arr; }
 	
 	public int getShipSize(){
 		DetermineShip();
@@ -25,16 +26,10 @@ public class GameBoard {
 		shipNum = 5;
 		valid = 0;
 		errorNum = 0;
+		arr = new int[rowSize][colSize];
 	}
-	
-	public int[][] CreateBoard(){
-		//creates matrix that holds characters
-	    int arr[][] = new int[rowSize][colSize];
-	    
-	    return arr;
-	}
-	
-	public void Print(int arr[][]){
+		
+	public void Print(){
 		//prints out matrix
 	    for(int row = 0; row < rowSize; row++)
 	    {
@@ -60,32 +55,32 @@ public class GameBoard {
 		}
 	}
 	
-	public int[][] AddShip(int arr[][], char direction, int row, int col){
+	public int[][] AddShip(char direction, int row, int col){
 		//If the valid passes, then decide what ship to place
 		errorNum = 0;
 		DetermineShip();
 		valid = 1;
-		placementCheck(arr, direction, row, col, shipSize);
+		placementCheck(direction, row, col, shipSize);
 		if(valid == 1){
 			switch (ships[0]){
 				case "Carrier":
-					placeShip(arr, direction, row, col);
+					placeShip(direction, row, col);
 					shipsResize();
 					break;
 				case "Battleship":
-					placeShip(arr, direction, row, col);
+					placeShip(direction, row, col);
 					shipsResize();
 					break;
 				case "Cruiser":
-					placeShip(arr, direction, row, col);
+					placeShip(direction, row, col);
 					shipsResize();
 					break;
 				case "Submarine":
-					placeShip(arr, direction, row, col);
+					placeShip(direction, row, col);
 					shipsResize();
 					break;
 				case "Destroyer":
-					placeShip(arr, direction, row, col);
+					placeShip(direction, row, col);
 					shipsResize();
 					break;
 				default:
@@ -130,22 +125,22 @@ public class GameBoard {
 		}
 	}
 	
-	public void placementCheck(int arr [][], char direction, int row, int col, int shipSize){
+	public void placementCheck(char direction, int row, int col, int shipSize){
 		//checks if chosen row and column is inside the board
 		if(row > 0 && row <= rowSize && col > 0 && col <= colSize){
 			
 			//checks if ship placement is out of bounds
 			if(direction == 'u' && (row-shipSize >= 0)){
-				overlapCheck(arr, direction, row, col);
+				overlapCheck(direction, row, col);
 			}
 			else if(direction == 'd' && (rowSize-(shipSize-1) >= row)){
-				overlapCheck(arr, direction, row, col);
+				overlapCheck(direction, row, col);
 			}
 			else if(direction == 'l' && (col-shipSize >= 0)){
-				overlapCheck(arr, direction, row, col);
+				overlapCheck(direction, row, col);
 			}
 			else if(direction == 'r' && (colSize-(shipSize-1) >= col)){
-				overlapCheck(arr, direction, row, col);
+				overlapCheck(direction, row, col);
 			}
 			else{
 				errorNum = 1;
@@ -158,7 +153,7 @@ public class GameBoard {
 		}
 	}
 	
-	public void overlapCheck(int[][] arr, char direction, int row, int col){
+	public void overlapCheck(char direction, int row, int col){
 		//checks if ship placement overlap other ships
 		valid = 1;
 		switch(direction){
@@ -204,7 +199,7 @@ public class GameBoard {
 		}
 	}
 	
-	public int[][] placeShip(int arr[][], char direction, int row, int col){
+	public int[][] placeShip(char direction, int row, int col){
 		//Places the ship on the board in a certain direction
 		switch(direction){
 			case 'u':
