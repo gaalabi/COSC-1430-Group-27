@@ -60,7 +60,7 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 		AiBoard.setPreferredSize(new Dimension(500, 500));
 		for (int r = 0; r < row; r++) {
 			for (int c = 0; c < col; c++) {
-				ebutton[r][c] = new EnemyButton();
+				ebutton[r][c] = new EnemyButton(this, EnemyBoard, r+1, c+1);
 				AiBoard.add(ebutton[r][c]);
 			}
 		}

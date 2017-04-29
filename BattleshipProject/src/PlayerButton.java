@@ -12,7 +12,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class PlayerButton extends JButton implements ActionListener, MouseListener{
-	private ImageIcon waves, current, rotImage, car1, car2, car3, car4, car5, bs1, bs2, bs3, bs4, cru1, cru2, cru3, sub1, sub2, sub3, des1, des2;
+	private ImageIcon waves, current, rotImage;
+	private ImageIcon car1, car2, car3, car4, car5;
+	private ImageIcon bs1, bs2, bs3, bs4;
+	private ImageIcon cru1, cru2, cru3;
+	private ImageIcon sub1, sub2, sub3;
+	private ImageIcon des1, des2;
 	private double rotU, rotD, rotL;//assumes image faces right or east of the screen
 	private int rLoc, cLoc;
 	private GameWindow window;
@@ -23,6 +28,19 @@ public class PlayerButton extends JButton implements ActionListener, MouseListen
 		addMouseListener(this);
 		addActionListener(this);
 		this.setMargin(new Insets(0,0,0,0));
+		setImages();
+		rotImage = new ImageIcon();
+		rotU = -90;
+		rotD = 90;
+		rotL = 180;
+		window = frame;
+		rLoc = r;
+		cLoc = c;
+		current = waves;
+		setIcon(current);
+	}
+	
+	public void setImages(){
 		waves = new ImageIcon(this.getClass().getResource("waveB.png"));
 		car1 = new ImageIcon(this.getClass().getResource("/ships/Carrier/car1.png"));
 		car2 = new ImageIcon(this.getClass().getResource("/ships/Carrier/car2.png"));
@@ -41,15 +59,6 @@ public class PlayerButton extends JButton implements ActionListener, MouseListen
 		sub3 = new ImageIcon(this.getClass().getResource("/ships/Submarine/sub3.png"));
 		des1 = new ImageIcon(this.getClass().getResource("/ships/Destroyer/des1.png"));
 		des2 = new ImageIcon(this.getClass().getResource("/ships/Destroyer/des2.png"));
-		rotImage = new ImageIcon();
-		rotU = -90;
-		rotD = 90;
-		rotL = 180;
-		window = frame;
-		rLoc = r;
-		cLoc = c;
-		current = waves;
-		setIcon(current);
 	}
 	
 	public ImageIcon rotateImage(ImageIcon picture, double angle){
