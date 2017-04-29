@@ -12,7 +12,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class PlayerButton extends JButton implements ActionListener, MouseListener{
-	private ImageIcon waves, red, blue, current, rotImage;
+	private ImageIcon waves, current, rotImage, car1, car2, car3, car4, car5, bs1, bs2, bs3, bs4, cru1, cru2, cru3, sub1, sub2, sub3, des1, des2;
 	private double rotU, rotD, rotL;//assumes image faces right or east of the screen
 	private int rLoc, cLoc;
 	private GameWindow window;
@@ -24,8 +24,23 @@ public class PlayerButton extends JButton implements ActionListener, MouseListen
 		addActionListener(this);
 		this.setMargin(new Insets(0,0,0,0));
 		waves = new ImageIcon(this.getClass().getResource("waveB.png"));
-		red = new ImageIcon(this.getClass().getResource("test1.png"));
-		blue = new ImageIcon(this.getClass().getResource("test2.png"));
+		car1 = new ImageIcon(this.getClass().getResource("/ships/Carrier/car1.png"));
+		car2 = new ImageIcon(this.getClass().getResource("/ships/Carrier/car2.png"));
+		car3 = new ImageIcon(this.getClass().getResource("/ships/Carrier/car3.png"));
+		car4 = new ImageIcon(this.getClass().getResource("/ships/Carrier/car4.png"));
+		car5 = new ImageIcon(this.getClass().getResource("/ships/Carrier/car5.png"));
+		bs1 = new ImageIcon(this.getClass().getResource("/ships/Battleship/bs1.png"));
+		bs2 = new ImageIcon(this.getClass().getResource("/ships/Battleship/bs2.png"));
+		bs3 = new ImageIcon(this.getClass().getResource("/ships/Battleship/bs3.png"));
+		bs4 = new ImageIcon(this.getClass().getResource("/ships/Battleship/bs4.png"));
+		cru1 = new ImageIcon(this.getClass().getResource("/ships/Cruiser/cru1.png"));
+		cru2 = new ImageIcon(this.getClass().getResource("/ships/Cruiser/cru2.png"));
+		cru3 = new ImageIcon(this.getClass().getResource("/ships/Cruiser/cru3.png"));
+		sub1 = new ImageIcon(this.getClass().getResource("/ships/Submarine/sub1.png"));
+		sub2 = new ImageIcon(this.getClass().getResource("/ships/Submarine/sub2.png"));
+		sub3 = new ImageIcon(this.getClass().getResource("/ships/Submarine/sub3.png"));
+		des1 = new ImageIcon(this.getClass().getResource("/ships/Destroyer/des1.png"));
+		des2 = new ImageIcon(this.getClass().getResource("/ships/Destroyer/des2.png"));
 		rotImage = new ImageIcon();
 		rotU = -90;
 		rotD = 90;
@@ -84,71 +99,71 @@ public class PlayerButton extends JButton implements ActionListener, MouseListen
 		case 1:
 			switch (shipPart) {
 			case 1:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(car1,rot);
 				break;
 			case 2:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(car2,rot);
 				break;
 			case 3:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(car3,rot);
 				break;
 			case 4:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(car4,rot);
 				break;
 			case 5:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(car5,rot);
 				break;
 			}
 			break;
 		case 2:
 			switch (shipPart) {
 			case 1:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(bs1,rot);
 				break;
 			case 2:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(bs2,rot);
 				break;
 			case 3:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(bs3,rot);
 				break;
 			case 4:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(bs4,rot);
 				break;
 			}
 			break;
 		case 3:
 			switch (shipPart) {
 			case 1:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(cru1,rot);
 				break;
 			case 2:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(cru2,rot);
 				break;
 			case 3:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(cru3,rot);
 				break;
 			}
 			break;
 		case 4:
 			switch (shipPart) {
 			case 1:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(sub1,rot);
 				break;
 			case 2:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(sub2,rot);
 				break;
 			case 3:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(sub3,rot);
 				break;
 			}
 			break;
 		case 5:
 			switch (shipPart) {
 			case 1:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(des1,rot);
 				break;
 			case 2:
-				rotImage = rotateImage(red,rot);
+				rotImage = rotateImage(des2,rot);
 				break;
 			}
 			break;
