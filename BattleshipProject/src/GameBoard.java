@@ -1,5 +1,3 @@
-import java.util.Scanner;
-
 public class GameBoard {
 
 	private int shipSize, shipType, shipNum, rowSize, colSize, valid, errorNum, arr[][];
