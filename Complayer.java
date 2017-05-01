@@ -131,7 +131,7 @@ public class Complayer {
         
         return nextSpace;
     }
-    public void returnToCenter()
+    public void returnToCenter()//returns complayer to inital point of contact with the ship
     {
         this.setR(this.getInitialR());
         this.setC(this.getInitialC());
@@ -206,7 +206,7 @@ public class Complayer {
     }
     
     public int makeSure(int arr[][])//go to inital point of contact and go the opposite diredtion of where it went previouly
-    {                    // if it hits something, loop it
+    {                    // if it hits something, loop it until it doesn't hit anything
         R = initialR;
         C = initialC;
         
