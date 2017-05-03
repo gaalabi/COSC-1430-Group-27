@@ -1,5 +1,3 @@
-package Battleship;
-
 
 import java.util.Random;
 

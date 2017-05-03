@@ -11,11 +11,14 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 	private JPanel AiBoard = new JPanel();
 	private JPanel GameInfo = new JPanel();
 	private JPanel holder = new JPanel();
+	JLabel bsWinLose;
 	private PlayerButton pbutton[][];
 	private EnemyButton ebutton[][];
 	private char direction;
-	private GameBoard playerBoard, EnemyBoard;	
-	
+	private GameBoard playerBoard, EnemyBoard;
+	private GameState gameState;
+	private ImageIcon win;
+
 	public char getDirection(){ return direction; }
 	public int getShipType(){ return shipType; }
 	public int getShipNum(){ return shipNum; }
@@ -27,20 +30,22 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 			onBoard = 1;
 		}
 	}
-	
+
 	public GameWindow(String title, GameBoard PlayerBoard, GameBoard AiBoard) {
 		super(title);
 		addMouseWheelListener(this);
+		win = new ImageIcon(getClass().getResource("waveB.png"));
 		playerBoard = PlayerBoard;
 		EnemyBoard = AiBoard;
+		gameState = new GameState();
 		row = 10;
 		col = 10;
 		pbutton = new PlayerButton[row][col];
 		ebutton = new EnemyButton[row][col];
 		direction = 'l';
 		onBoard = 0;
-		setShipInfo();
-		}
+		setShipInfo();		
+	}
 
 	public void CreateWindow() {
 		setSize(1300, 600);
@@ -50,7 +55,7 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 		PlayerBoard.setPreferredSize(new Dimension(500, 500));
 		for (int r = 0; r < row; r++) {
 			for (int c = 0; c < col; c++) {
-				pbutton[r][c] = new PlayerButton(this, r+1, c+1);
+				pbutton[r][c] = new PlayerButton(this, gameState, r+1, c+1);
 				PlayerBoard.add(pbutton[r][c]);
 			}
 		}
@@ -59,41 +64,52 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 		AiBoard.setPreferredSize(new Dimension(500, 500));
 		for (int r = 0; r < row; r++) {
 			for (int c = 0; c < col; c++) {
-				ebutton[r][c] = new EnemyButton(this, EnemyBoard, r+1, c+1);
+				ebutton[r][c] = new EnemyButton(this, gameState, EnemyBoard, playerBoard, r+1, c+1);
 				AiBoard.add(ebutton[r][c]);
 			}
 		}
 
 		GameInfo.setLayout(new GridLayout(3, 1));
-
-		ImageIcon icon = new ImageIcon(getClass().getResource("waveB.png"));
-		JLabel test = new JLabel("<html>Test<br>hello<html>");
-		test.setHorizontalAlignment(test.CENTER);
-		test.setIcon(icon);
-		GameInfo.add(test);
-
-		test = new JLabel("<html>Test<br>hello<html>");
-		test.setHorizontalAlignment(test.CENTER);
-		GameInfo.add(test);
-
-		test = new JLabel("<html>Test<br>hello<html>");
-		test.setHorizontalAlignment(test.CENTER);
-		GameInfo.add(test);
+		
+		bsWinLose = new JLabel("Battleship");
+		bsWinLose.setHorizontalAlignment(bsWinLose.CENTER);
+		GameInfo.add(bsWinLose);
 
 		JLabel Board1 = new JLabel("<html>Player<br>Board<html>");
 		Board1.setVerticalAlignment(Board1.CENTER);
 
 		JLabel Board2 = new JLabel("<html>Enemy<br>Board<html>");
 		Board2.setHorizontalAlignment(Board2.CENTER);
-				
+
 		holder.add(Board1);
 		holder.add(PlayerBoard);
 		holder.add(GameInfo);
 		holder.add(AiBoard);
 		holder.add(Board2);
 		add(holder);
-				
+
 		setVisible(true);
+	}
+	
+	public void updateGameState(){
+		gameState.setWinStatus(playerBoard.getBoard(), EnemyBoard.getBoard());
+		if(gameState.getAiWin()){
+			gameWin();
+		}
+		else if(gameState.getPlayerWin()){
+			gameWin();
+		}
+	}
+	
+	public void gameWin(){
+		if(gameState.getPlayerWin() == true){
+			win = new ImageIcon(getClass().getResource("waveB.png"));
+		}
+		else{
+			win = new ImageIcon(getClass().getResource("waveB.png"));
+		}
+		bsWinLose.setIcon(win);
+		bsWinLose.setText("");
 	}
 	
 	public void setShipInfo(){
@@ -102,7 +118,7 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 		shipSize = playerBoard.getShipSize();
 		shipNum = playerBoard.getShipNum();
 	}
-	
+
 	public void showShip(int r, int c){
 		int shipPart = 1;
 		cbrow = r;
@@ -142,11 +158,11 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 			break;
 		}
 	}
-	
+
 	public void placeShip(int r, int c){
 		int shipPart = 1;
 		playerBoard.AddShip(direction, r, c);
-		
+
 		if(playerBoard.getValid() == 1){		
 			switch(direction){
 			case 'u':
@@ -190,7 +206,7 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 			playerBoard.Print();
 		}
 	}
-	
+
 	public void clearShip(){
 		for(int r=0; r<row; r++){
 			for(int c=0; c<col; c++){
@@ -198,12 +214,12 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 			}
 		}			
 	}
-	
+
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		if(!e.isConsumed()){
 			e.consume();
 		}
-		
+
 		if(e.getWheelRotation() > 0){
 			switch (direction) {
 			case 'u':
@@ -236,7 +252,7 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 				break;
 			}
 		}
-		
+
 		if(onBoard == 1){
 			clearShip();
 			showShip(cbrow, cbcol);

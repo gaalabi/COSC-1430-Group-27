@@ -5,7 +5,7 @@ public static void main(String[] args) throws Exception{
     	int row = 0;
     	int col = 0;
     	char direction;
-    	    	
+    	
     	GameBoard aiBoard = new GameBoard();
     	Ai Cp = new Ai();
     	Cp.placeShips(aiBoard.getBoard(), aiBoard);

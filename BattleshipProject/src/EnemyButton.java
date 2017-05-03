@@ -11,8 +11,9 @@ public class EnemyButton extends JButton implements ActionListener{
 	private ImageIcon waves, wavehit, wavemiss, current;
 	private ImageIcon[] explo;
 	private GameWindow window;
-	private GameBoard EnemyBoard;
+	private GameBoard EnemyBoard, playerBoard;
 	private Timer timer;
+	private GameState gameState;
 	private int rLoc, cLoc, count;
 	
 	private TimerTask explosion = new TimerTask(){
@@ -29,17 +30,19 @@ public class EnemyButton extends JButton implements ActionListener{
 		}
 	};
 	
-	public EnemyButton(GameWindow frame, GameBoard eBoard, int r, int c){
+	public EnemyButton(GameWindow frame, GameState gState, GameBoard eBoard, GameBoard pBoard, int r, int c){
 		this.addActionListener(this);
 		this.setMargin(new Insets(0,0,0,0));
 		window = frame;
 		EnemyBoard = eBoard;
+		playerBoard = pBoard;
 		rLoc = r;
 		cLoc = c;
 		count = 0;
 		current = waves;
 		explo = new ImageIcon[14];
 		timer = new Timer();
+		gameState = gState;
 		setImages();
 		setIcon(waves);
 	}
@@ -76,11 +79,12 @@ public class EnemyButton extends JButton implements ActionListener{
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		if(EnemyBoard.checkSpace(rLoc, cLoc)){
+		if(EnemyBoard.checkSpace(rLoc, cLoc) && playerBoard.getShipNum() == 0 && !gameState.getAiWin() && !gameState.getPlayerWin()){
 			EnemyBoard.hitORmiss(rLoc, cLoc);
 			timer = new Timer();
 			timer.scheduleAtFixedRate(explosion, 80, 80);
 			EnemyBoard.Print();
+			window.updateGameState();
 		}
 	}
 
