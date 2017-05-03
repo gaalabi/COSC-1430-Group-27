@@ -1,3 +1,4 @@
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseWheelEvent;
@@ -10,14 +11,17 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 	private JPanel PlayerBoard = new JPanel();
 	private JPanel AiBoard = new JPanel();
 	private JPanel GameInfo = new JPanel();
+	private JTextPane helpInfo = new JTextPane();
 	private JPanel holder = new JPanel();
-	JLabel bsWinLose;
+	private JLabel bsWinLose;
 	private PlayerButton pbutton[][];
 	private EnemyButton ebutton[][];
 	private char direction;
 	private GameBoard playerBoard, EnemyBoard;
 	private GameState gameState;
 	private ImageIcon win;
+	private Complayer cpShoot;
+	private boolean cpHit, shipFound;
 
 	public char getDirection(){ return direction; }
 	public int getShipType(){ return shipType; }
@@ -38,17 +42,21 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 		playerBoard = PlayerBoard;
 		EnemyBoard = AiBoard;
 		gameState = new GameState();
+		cpShoot = new Complayer();
 		row = 10;
 		col = 10;
 		pbutton = new PlayerButton[row][col];
 		ebutton = new EnemyButton[row][col];
 		direction = 'l';
 		onBoard = 0;
-		setShipInfo();		
+		cpHit = false;
+		shipFound = false;
+		setShipInfo();
+		cpShoot.setInitialSpace();
 	}
 
 	public void CreateWindow() {
-		setSize(1300, 600);
+		setSize(1400, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		PlayerBoard.setLayout(new GridLayout(row, col));
@@ -74,21 +82,40 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 		bsWinLose = new JLabel("Battleship");
 		bsWinLose.setHorizontalAlignment(bsWinLose.CENTER);
 		GameInfo.add(bsWinLose);
+		
+		helpInfo.setBounds(1, 1, 300, 200);
+		GameInfo.add(helpInfo, BorderLayout.SOUTH);
 
 		JLabel Board1 = new JLabel("<html>Player<br>Board<html>");
 		Board1.setVerticalAlignment(Board1.CENTER);
 
 		JLabel Board2 = new JLabel("<html>Enemy<br>Board<html>");
 		Board2.setHorizontalAlignment(Board2.CENTER);
-
+		
 		holder.add(Board1);
 		holder.add(PlayerBoard);
 		holder.add(GameInfo);
 		holder.add(AiBoard);
 		holder.add(Board2);
 		add(holder);
+		
+		helpInfo.setText("Use mousewheel to turn the ship.\nClick on the Boards to fire and place ships.");
 
 		setVisible(true);
+	}
+	
+	public void shootPlayer() {
+		playerBoard.hitORmiss(cpShoot.getR(), cpShoot.getC());
+		cpHit = playerBoard.getHitoMiss(cpShoot.getR(), cpShoot.getC());
+		if(!cpHit && !shipFound){
+			while(!playerBoard.checkSpace(cpShoot.getR(), cpShoot.getC())){
+				cpShoot.shipSearch(playerBoard.getBoard());
+			}
+		}
+		else{
+			shipFound = true;
+			cpShoot.shipFound(1, playerBoard.getBoard());
+		}
 	}
 	
 	public void updateGameState(){
@@ -103,10 +130,10 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 	
 	public void gameWin(){
 		if(gameState.getPlayerWin() == true){
-			win = new ImageIcon(getClass().getResource("waveB.png"));
+			win = new ImageIcon(getClass().getResource("pwin.png"));
 		}
 		else{
-			win = new ImageIcon(getClass().getResource("waveB.png"));
+			win = new ImageIcon(getClass().getResource("cpwin.png"));
 		}
 		bsWinLose.setIcon(win);
 		bsWinLose.setText("");
@@ -203,7 +230,6 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 				break;
 			}
 			setShipInfo();
-			playerBoard.Print();
 		}
 	}
 

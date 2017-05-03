@@ -17,8 +17,6 @@ public class GameBoard {
 	public int[][] getBoard(){ return arr; }
 	
 	public boolean getHitoMiss(int r, int c){
-		r--;
-		c--;
 		if(arr[r][c] == 9){
 			hitomiss = true;
 		}
@@ -284,8 +282,6 @@ public class GameBoard {
 		public boolean checkSpace(int r, int c)// checks to see if space has been hit before (true if the space has not been hit before)
 		{
 			boolean canHit;
-			r--;
-			c--;
 			
 			if(arr[r][c] == 8 || arr[r][c] == 9)
 				canHit = false;
@@ -297,8 +293,6 @@ public class GameBoard {
 
 		public void hitORmiss(int r, int c)// checks to see if space is hit or miss
 		{   
-			r--;
-			c--;
 			
 			if (arr[r][c] == 0)
 			{

@@ -1,14 +1,16 @@
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-public class EnemyButton extends JButton implements ActionListener{
-	private ImageIcon waves, wavehit, wavemiss, current;
+public class EnemyButton extends JButton implements ActionListener, MouseListener{
+	private ImageIcon waves, wavehit, wavemiss, current, crosshair;
 	private ImageIcon[] explo;
 	private GameWindow window;
 	private GameBoard EnemyBoard, playerBoard;
@@ -32,6 +34,7 @@ public class EnemyButton extends JButton implements ActionListener{
 	
 	public EnemyButton(GameWindow frame, GameState gState, GameBoard eBoard, GameBoard pBoard, int r, int c){
 		this.addActionListener(this);
+		this.addMouseListener(this);
 		this.setMargin(new Insets(0,0,0,0));
 		window = frame;
 		EnemyBoard = eBoard;
@@ -39,11 +42,11 @@ public class EnemyButton extends JButton implements ActionListener{
 		rLoc = r;
 		cLoc = c;
 		count = 0;
-		current = waves;
 		explo = new ImageIcon[14];
 		timer = new Timer();
-		gameState = gState;
 		setImages();
+		current = waves;
+		gameState = gState;
 		setIcon(waves);
 	}
 	
@@ -51,6 +54,7 @@ public class EnemyButton extends JButton implements ActionListener{
 		waves = new ImageIcon(this.getClass().getResource("waveB.png"));
 		wavehit = new ImageIcon(this.getClass().getResource("/explosion/wblackmarkhit.png"));
 		wavemiss = new ImageIcon(this.getClass().getResource("wmiss.png"));
+		crosshair = new ImageIcon(this.getClass().getResource("wcrosshair.png"));
 		explo[0] = new ImageIcon(this.getClass().getResource("/explosion/wExplo1.png"));
 		explo[1] = new ImageIcon(this.getClass().getResource("/explosion/wExplo2.png"));
 		explo[2] = new ImageIcon(this.getClass().getResource("/explosion/wExplo3.png"));
@@ -68,7 +72,7 @@ public class EnemyButton extends JButton implements ActionListener{
 	}
 		
 	public void shotStatus(){
-		if(EnemyBoard.getHitoMiss(rLoc, cLoc)){
+		if(EnemyBoard.getHitoMiss(rLoc-1, cLoc-1)){
 			current = wavehit;
 			setIcon(current);
 		}
@@ -79,13 +83,44 @@ public class EnemyButton extends JButton implements ActionListener{
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		if(EnemyBoard.checkSpace(rLoc, cLoc) && playerBoard.getShipNum() == 0 && !gameState.getAiWin() && !gameState.getPlayerWin()){
-			EnemyBoard.hitORmiss(rLoc, cLoc);
+		if(EnemyBoard.checkSpace(rLoc-1, cLoc-1) && playerBoard.getShipNum() == 0 && !gameState.getAiWin() && !gameState.getPlayerWin()){
+			EnemyBoard.hitORmiss(rLoc-1, cLoc-1);
 			timer = new Timer();
 			timer.scheduleAtFixedRate(explosion, 80, 80);
-			EnemyBoard.Print();
+			window.shootPlayer();
 			window.updateGameState();
 		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		setIcon(crosshair);
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		setIcon(current);
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

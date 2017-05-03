@@ -1,4 +1,3 @@
-
 import java.util.Random;
 
 public class Complayer {
@@ -67,27 +66,59 @@ public class Complayer {
         return nextSpace;
     }
     
-    public int shipFound(int around)//if there is a hit, the computer will shoot around it
+    public int shipFound(int around, int arr[][])//if there is a hit, the computer will shoot around it
     {                               // until it hits something again 
-        initialR = R;//holding variable
-        initialC = C;//holding variable
+        this.initialR = this.R;//holding variable
+        this.initialC = this.C;//holding variable
+        R = this.getR();
+        C = this.getC();
         
         switch(around){
             case 1:
-                nextSpace = arr[R+1][C];
-                dir = 'd';
+                if (R < 9)
+                {
+                    R++;
+                    nextSpace = arr[R++][C];
+                    dir = 'd';
+                }
+                else
+                {
+                    this.shipFound(2, arr);
+                }
+                                  
                 break;
+                
             case 2:
-                nextSpace = arr[R-1][C];
-                dir = 'u';
+                if (R >0)
+                {
+                    R--;
+                    nextSpace = arr[R][C];
+                    dir = 'u';
+                }
+                else
+                {
+                    this.shipFound(3, arr);
+                }
                 break;
             case 3:
-                nextSpace = arr[R][C+1];
-                dir = 'l';
+                if (C < 9)
+                {
+                    C++;
+                    nextSpace = arr[R][C];
+                    dir = 'r';
+                }
+                else
+                {
+                    this.shipFound(4, arr);
+                }
                 break;
             case 4:
-                nextSpace = arr[R][C-1];
-                dir = 'r';
+                if (C > 0)
+                {
+                    C--;
+                    nextSpace = arr[R][C];
+                    dir = 'l';
+                }
                 break;
             default:
                 System.out.println("ERROR");
@@ -97,7 +128,27 @@ public class Complayer {
         
         return nextSpace;
     }
-    
+    public void returnToCenter()
+    {
+        this.setR(this.getInitialR());
+        this.setC(this.getInitialC());
+    }
+    public void setR(int r)
+    {
+        R = r;
+    }
+    public void setC(int c)
+    {
+        C = c;
+    }
+    public void setDir(char d)
+    {
+        dir = d;
+    }
+    public void setNext(int next1, int next2, int arr[][])
+    {
+        nextSpace =  arr[next1][next2];
+    }
     public char getDir()
     {
         return dir;
@@ -117,13 +168,17 @@ public class Complayer {
     {
         return R;
     }
+    public int getNext()
+    {
+        return nextSpace;
+    }
     
     public int getC()
     {
         return C;
     }
     
-    public int dirFound(char c) //loop getDir() until it stops hitting things
+    public int dirFound(char c, int arr[][]) //loop getDir() until it stops hitting things
     {
         switch(c){
             case 'd':
@@ -134,11 +189,11 @@ public class Complayer {
                 R = R-1;
                 nextSpace = arr[R][C];
                 break;
-            case 'l':
+            case 'r':
                 C = C+1;
                 nextSpace = arr[R][C];
                 break;
-            case 'r':
+            case 'l':
                 C = C-1;
                 nextSpace = arr[R][C];
                 break;
@@ -147,7 +202,7 @@ public class Complayer {
         return nextSpace;
     }
     
-    public int makeSure()//go to inital point of contact and go the opposite diredtion of where it went previouly
+    public int makeSure(int arr[][])//go to inital point of contact and go the opposite diredtion of where it went previouly
     {                    // if it hits something, loop it
         R = initialR;
         C = initialC;
@@ -176,4 +231,3 @@ public class Complayer {
     }
     
 }
-   
