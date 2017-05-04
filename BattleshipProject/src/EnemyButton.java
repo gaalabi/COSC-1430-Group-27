@@ -87,7 +87,7 @@ public class EnemyButton extends JButton implements ActionListener, MouseListene
 			EnemyBoard.hitORmiss(rLoc-1, cLoc-1);
 			timer = new Timer();
 			timer.scheduleAtFixedRate(explosion, 80, 80);
-			window.shootPlayer();
+			window.showShot();
 			window.updateGameState();
 		}
 	}

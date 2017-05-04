@@ -2,7 +2,7 @@ import java.util.Random;
 
 public class Complayer {
     
-    private int R, C, arr[][], initialR,initialC, nextSpace; 
+    private int R, C, arr[][], initialR, initialC, nextSpace, dirNum; 
     private char dir;
     private Random rand;
     
@@ -13,11 +13,13 @@ public class Complayer {
         initialR = 0;
         initialC = 0;
         nextSpace = 0;
+        dirNum = 1;
         rand = new Random();
     }
+    
     public void setNewR()//how the first space is decided
     {   
-        R = rand.nextInt(10);   
+        R = rand.nextInt(10);
     }
    public void setNewC()
    {   
@@ -65,25 +67,30 @@ public class Complayer {
         
         return nextSpace;
     }
-    
-    public int shipFound(int around, int arr[][])//if there is a hit, the computer will shoot around it
+        
+    public int shipFound(int arr[][])//if there is a hit, the computer will shoot around it
     {                               // until it hits something again 
-        this.initialR = this.R;//holding variable
-        this.initialC = this.C;//holding variable
+    	if(dirNum == 1){
+    		this.initialR = this.R;//holding variable
+    		this.initialC = this.C;//holding variable
+    	}
+    	
         R = this.getR();
         C = this.getC();
-        
-        switch(around){
+        //dirNum %= 4;
+        switch(dirNum){
             case 1:
                 if (R < 9)
                 {
                     R++;
+                    dirNum++;
                     nextSpace = arr[R++][C];
                     dir = 'd';
                 }
                 else
                 {
-                    this.shipFound(2, arr);
+                	dirNum ++;
+                    //this.shipFound(arr);
                 }
                                   
                 break;
@@ -92,30 +99,35 @@ public class Complayer {
                 if (R >0)
                 {
                     R--;
+                    dirNum++;
                     nextSpace = arr[R][C];
                     dir = 'u';
                 }
                 else
                 {
-                    this.shipFound(3, arr);
+                	dirNum++;
+                    //this.shipFound(arr);
                 }
                 break;
             case 3:
                 if (C < 9)
                 {
                     C++;
+                    dirNum++;
                     nextSpace = arr[R][C];
                     dir = 'r';
                 }
                 else
                 {
-                    this.shipFound(4, arr);
+                	dirNum++;
+                    //this.shipFound(arr);
                 }
                 break;
             case 4:
                 if (C > 0)
                 {
                     C--;
+                    dirNum++;
                     nextSpace = arr[R][C];
                     dir = 'l';
                 }
@@ -127,6 +139,13 @@ public class Complayer {
         }
         
         return nextSpace;
+    }
+    public void setDirNum(int x){
+    	dirNum = x;
+    }
+    public int getDirNum()
+    {
+    	return dirNum;
     }
     public void returnToCenter()
     {
@@ -178,9 +197,9 @@ public class Complayer {
         return C;
     }
     
-    public int dirFound(char c, int arr[][]) //loop getDir() until it stops hitting things
+    public int dirFound(int arr[][]) //loop getDir() until it stops hitting things
     {
-        switch(c){
+        switch(dir){
             case 'd':
                 R = R+1;
                 nextSpace = arr[R][C];
@@ -202,7 +221,7 @@ public class Complayer {
         return nextSpace;
     }
     
-    public int makeSure(int arr[][])//go to inital point of contact and go the opposite diredtion of where it went previouly
+    public int makeSure(int arr[][])//go to inital point of contact and go the opposite direction of where it went previously
     {                    // if it hits something, loop it
         R = initialR;
         C = initialC;
@@ -211,18 +230,22 @@ public class Complayer {
             case 'd':
                 R = R-1;
                 nextSpace = arr[R][C];
+                dir = 'd';
                 break;
             case 'u':
                 R = R+1;
                 nextSpace = arr[R][C];
+                dir = 'u';
                 break;
             case 'l':
                 C = C-1;
                 nextSpace = arr[R][C];
+                dir = 'l';
                 break;
             case 'r':
                 C = C+1;
                 nextSpace = arr[R][C];
+                dir = 'r';
                 break;
         }
         

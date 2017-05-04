@@ -7,28 +7,50 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class PlayerButton extends JButton implements ActionListener, MouseListener{
-	private ImageIcon waves, current, rotImage;
+	private ImageIcon waves, current, rotImage, wavehit, wavemiss;
 	private ImageIcon car1, car2, car3, car4, car5;
 	private ImageIcon bs1, bs2, bs3, bs4;
 	private ImageIcon cru1, cru2, cru3;
 	private ImageIcon sub1, sub2, sub3;
 	private ImageIcon des1, des2;
+	private ImageIcon[] explo;
 	private double rotU, rotD, rotL;//assumes image faces right or east of the screen
-	private int rLoc, cLoc;
+	private int rLoc, cLoc, count;
 	private GameState gameState;
 	private GameWindow window;
+	private Timer timer;
+	private GameBoard playerBoard, EnemyBoard;
 	
 	public ImageIcon getRotImage(){ return rotImage; }
 	
-	public PlayerButton(GameWindow frame, GameState gState, int r, int c){
+	private TimerTask explosion = new TimerTask(){
+		public void run(){
+			if(count < explo.length){
+				setIcon(explo[count]);
+				count++;
+			}
+			else{
+				count = 0;
+				shotStatus();
+				window.shootPlayer();
+				timer.cancel();
+			}
+		}
+	};
+	
+	public PlayerButton(GameWindow frame, GameBoard pBoard, GameBoard eBoard, GameState gState, int r, int c){
 		addMouseListener(this);
 		addActionListener(this);
 		this.setMargin(new Insets(0,0,0,0));
+		explo = new ImageIcon[14];
 		setImages();
 		rotImage = new ImageIcon();
 		rotU = -90;
@@ -39,6 +61,9 @@ public class PlayerButton extends JButton implements ActionListener, MouseListen
 		cLoc = c;
 		gameState = gState;
 		current = waves;
+		playerBoard = pBoard;
+		EnemyBoard = eBoard;
+		timer = new Timer();
 		setIcon(current);
 	}
 	
@@ -61,6 +86,42 @@ public class PlayerButton extends JButton implements ActionListener, MouseListen
 		sub3 = new ImageIcon(this.getClass().getResource("/ships/Submarine/sub3.png"));
 		des1 = new ImageIcon(this.getClass().getResource("/ships/Destroyer/des1.png"));
 		des2 = new ImageIcon(this.getClass().getResource("/ships/Destroyer/des2.png"));
+		explo[0] = new ImageIcon(this.getClass().getResource("/explosion/wExplo1.png"));
+		explo[1] = new ImageIcon(this.getClass().getResource("/explosion/wExplo2.png"));
+		explo[2] = new ImageIcon(this.getClass().getResource("/explosion/wExplo3.png"));
+		explo[3] = new ImageIcon(this.getClass().getResource("/explosion/wExplo4.png"));
+		explo[4] = new ImageIcon(this.getClass().getResource("/explosion/wExplo5.png"));
+		explo[5] = new ImageIcon(this.getClass().getResource("/explosion/wExplo6.png"));
+		explo[6] = new ImageIcon(this.getClass().getResource("/explosion/wExplo7.png"));
+		explo[7] = new ImageIcon(this.getClass().getResource("/explosion/wExplo8.png"));
+		explo[8] = new ImageIcon(this.getClass().getResource("/explosion/wExplo9.png"));
+		explo[9] = new ImageIcon(this.getClass().getResource("/explosion/wExplo10.png"));
+		explo[10] = new ImageIcon(this.getClass().getResource("/explosion/wExplo11.png"));
+		explo[11] = new ImageIcon(this.getClass().getResource("/explosion/wExplo12.png"));
+		explo[12] = new ImageIcon(this.getClass().getResource("/explosion/wExplo13.png"));
+		explo[13] = new ImageIcon(this.getClass().getResource("/explosion/wExplo14.png"));
+		wavehit = new ImageIcon(this.getClass().getResource("/explosion/wblackmarkhit.png"));
+		wavemiss = new ImageIcon(this.getClass().getResource("wmiss.png"));
+	}
+	
+	public void shotStatus(){
+		if(playerBoard.getHitoMiss(rLoc-1, cLoc-1)){
+			current = wavehit;
+			setIcon(current);
+		}
+		else{
+			current = wavemiss;
+			setIcon(current);
+		}
+	}
+	
+	public void shotsFired(){
+		if(playerBoard.checkSpace(rLoc-1, cLoc-1) && EnemyBoard.getShipNum() == 0 && !gameState.getAiWin() && !gameState.getPlayerWin()){
+			playerBoard.hitORmiss(rLoc-1, cLoc-1);
+			timer = new Timer();
+			timer.scheduleAtFixedRate(explosion, 80, 80);
+			window.updateGameState();
+		}
 	}
 	
 	public ImageIcon rotateImage(ImageIcon picture, double angle){

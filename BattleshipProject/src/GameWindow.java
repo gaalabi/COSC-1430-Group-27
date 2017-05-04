@@ -21,7 +21,7 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 	private GameState gameState;
 	private ImageIcon win;
 	private Complayer cpShoot;
-	private boolean cpHit, shipFound;
+	private boolean cpHit, dirFound, checkOpp;
 
 	public char getDirection(){ return direction; }
 	public int getShipType(){ return shipType; }
@@ -50,7 +50,8 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 		direction = 'l';
 		onBoard = 0;
 		cpHit = false;
-		shipFound = false;
+		dirFound = false;
+		checkOpp = false;
 		setShipInfo();
 		cpShoot.setInitialSpace();
 	}
@@ -63,7 +64,7 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 		PlayerBoard.setPreferredSize(new Dimension(500, 500));
 		for (int r = 0; r < row; r++) {
 			for (int c = 0; c < col; c++) {
-				pbutton[r][c] = new PlayerButton(this, gameState, r+1, c+1);
+				pbutton[r][c] = new PlayerButton(this, playerBoard, EnemyBoard, gameState, r+1, c+1);
 				PlayerBoard.add(pbutton[r][c]);
 			}
 		}
@@ -78,11 +79,11 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 		}
 
 		GameInfo.setLayout(new GridLayout(3, 1));
-		
+
 		bsWinLose = new JLabel("Battleship");
 		bsWinLose.setHorizontalAlignment(bsWinLose.CENTER);
 		GameInfo.add(bsWinLose);
-		
+
 		helpInfo.setBounds(1, 1, 300, 200);
 		GameInfo.add(helpInfo, BorderLayout.SOUTH);
 
@@ -91,33 +92,60 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 
 		JLabel Board2 = new JLabel("<html>Enemy<br>Board<html>");
 		Board2.setHorizontalAlignment(Board2.CENTER);
-		
+
 		holder.add(Board1);
 		holder.add(PlayerBoard);
 		holder.add(GameInfo);
 		holder.add(AiBoard);
 		holder.add(Board2);
 		add(holder);
-		
+
 		helpInfo.setText("Use mousewheel to turn the ship.\nClick on the Boards to fire and place ships.");
 
 		setVisible(true);
 	}
-	
-	public void shootPlayer() {
-		playerBoard.hitORmiss(cpShoot.getR(), cpShoot.getC());
+	public void showShot(){
+		pbutton[cpShoot.getR()][cpShoot.getC()].shotsFired();
+	}
+	public void shootPlayer() {		
+		playerBoard.hitORmiss(cpShoot.getR(), cpShoot.getC());		
 		cpHit = playerBoard.getHitoMiss(cpShoot.getR(), cpShoot.getC());
-		if(!cpHit && !shipFound){
-			while(!playerBoard.checkSpace(cpShoot.getR(), cpShoot.getC())){
-				cpShoot.shipSearch(playerBoard.getBoard());
+		
+		if(!cpHit){
+			if(!cpHit && dirFound && !checkOpp){
+				cpShoot.returnToCenter();				
+				cpShoot.makeSure(playerBoard.getBoard());
+				cpHit = playerBoard.getHitoMiss(cpShoot.getR(), cpShoot.getC());
+				checkOpp = true;
+				if(cpHit){
+					dirFound = true;
+				}
+				else{
+					dirFound = false;
+				}				
 			}
+			else{
+				checkOpp = false;
+				while(!playerBoard.checkSpace(cpShoot.getR(), cpShoot.getC())){
+					cpShoot.shipSearch(playerBoard.getBoard());
+				}
+			}
+
 		}
 		else{
-			shipFound = true;
-			cpShoot.shipFound(1, playerBoard.getBoard());
+			if(dirFound == false){
+				cpShoot.returnToCenter();
+				cpShoot.shipFound(playerBoard.getBoard());
+			}
+			else{
+				cpShoot.setDirNum(1);
+				cpShoot.dirFound(playerBoard.getBoard());
+			}
 		}
+
+
 	}
-	
+
 	public void updateGameState(){
 		gameState.setWinStatus(playerBoard.getBoard(), EnemyBoard.getBoard());
 		if(gameState.getAiWin()){
@@ -127,7 +155,7 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 			gameWin();
 		}
 	}
-	
+
 	public void gameWin(){
 		if(gameState.getPlayerWin() == true){
 			win = new ImageIcon(getClass().getResource("pwin.png"));
@@ -138,7 +166,7 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 		bsWinLose.setIcon(win);
 		bsWinLose.setText("");
 	}
-	
+
 	public void setShipInfo(){
 		playerBoard.DetermineShip();
 		shipType = playerBoard.getShipType();
