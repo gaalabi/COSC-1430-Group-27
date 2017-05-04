@@ -17,6 +17,7 @@ public class EnemyButton extends JButton implements ActionListener, MouseListene
 	private Timer timer;
 	private GameState gameState;
 	private int rLoc, cLoc, count;
+	private boolean shotShown;
 	
 	private TimerTask explosion = new TimerTask(){
 		public void run(){
@@ -42,6 +43,7 @@ public class EnemyButton extends JButton implements ActionListener, MouseListene
 		rLoc = r;
 		cLoc = c;
 		count = 0;
+		shotShown = false;
 		explo = new ImageIcon[14];
 		timer = new Timer();
 		setImages();
@@ -83,12 +85,13 @@ public class EnemyButton extends JButton implements ActionListener, MouseListene
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		if(EnemyBoard.checkSpace(rLoc-1, cLoc-1) && playerBoard.getShipNum() == 0 && !gameState.getAiWin() && !gameState.getPlayerWin()){
+		if(window.getShotDone() && !shotShown && EnemyBoard.checkSpace(rLoc-1, cLoc-1) && playerBoard.getShipNum() == 0 && !gameState.getAiWin() && !gameState.getPlayerWin()){
 			EnemyBoard.hitORmiss(rLoc-1, cLoc-1);
 			timer = new Timer();
 			timer.scheduleAtFixedRate(explosion, 80, 80);
+			shotShown = true;
 			window.showShot();
-			window.updateGameState();
+			window.updateGameState();			
 		}
 	}
 

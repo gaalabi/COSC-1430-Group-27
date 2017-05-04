@@ -28,6 +28,7 @@ public class PlayerButton extends JButton implements ActionListener, MouseListen
 	private GameWindow window;
 	private Timer timer;
 	private GameBoard playerBoard, EnemyBoard;
+	private boolean shotShown;
 	
 	public ImageIcon getRotImage(){ return rotImage; }
 	
@@ -38,9 +39,10 @@ public class PlayerButton extends JButton implements ActionListener, MouseListen
 				count++;
 			}
 			else{
-				count = 0;
-				shotStatus();
+				count = 0;				
 				window.shootPlayer();
+				shotStatus();
+				window.setShotDone(true);
 				timer.cancel();
 			}
 		}
@@ -63,6 +65,7 @@ public class PlayerButton extends JButton implements ActionListener, MouseListen
 		current = waves;
 		playerBoard = pBoard;
 		EnemyBoard = eBoard;
+		shotShown = false;
 		timer = new Timer();
 		setIcon(current);
 	}
@@ -116,10 +119,11 @@ public class PlayerButton extends JButton implements ActionListener, MouseListen
 	}
 	
 	public void shotsFired(){
-		if(playerBoard.checkSpace(rLoc-1, cLoc-1) && EnemyBoard.getShipNum() == 0 && !gameState.getAiWin() && !gameState.getPlayerWin()){
-			playerBoard.hitORmiss(rLoc-1, cLoc-1);
+		if(!shotShown && playerBoard.checkSpace(rLoc-1, cLoc-1) && EnemyBoard.getShipNum() == 0 && !gameState.getAiWin() && !gameState.getPlayerWin()){
+			window.setShotDone(false);
 			timer = new Timer();
 			timer.scheduleAtFixedRate(explosion, 80, 80);
+			shotShown = true;
 			window.updateGameState();
 		}
 	}

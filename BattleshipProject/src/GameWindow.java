@@ -20,8 +20,8 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 	private GameBoard playerBoard, EnemyBoard;
 	private GameState gameState;
 	private ImageIcon win;
-	private Complayer cpShoot;
-	private boolean cpHit, dirFound, checkOpp;
+	private AiShoot aiShoot;
+	private boolean shotDone;
 
 	public char getDirection(){ return direction; }
 	public int getShipType(){ return shipType; }
@@ -42,18 +42,15 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 		playerBoard = PlayerBoard;
 		EnemyBoard = AiBoard;
 		gameState = new GameState();
-		cpShoot = new Complayer();
+		aiShoot = new AiShoot(playerBoard);
 		row = 10;
 		col = 10;
 		pbutton = new PlayerButton[row][col];
 		ebutton = new EnemyButton[row][col];
+		shotDone = true;
 		direction = 'l';
 		onBoard = 0;
-		cpHit = false;
-		dirFound = false;
-		checkOpp = false;
 		setShipInfo();
-		cpShoot.setInitialSpace();
 	}
 
 	public void CreateWindow() {
@@ -104,46 +101,22 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 
 		setVisible(true);
 	}
-	public void showShot(){
-		pbutton[cpShoot.getR()][cpShoot.getC()].shotsFired();
+	
+	public void setShotDone(boolean shot){
+		shotDone = shot;
 	}
-	public void shootPlayer() {		
-		playerBoard.hitORmiss(cpShoot.getR(), cpShoot.getC());		
-		cpHit = playerBoard.getHitoMiss(cpShoot.getR(), cpShoot.getC());
-		
-		if(!cpHit){
-			if(!cpHit && dirFound && !checkOpp){
-				cpShoot.returnToCenter();				
-				cpShoot.makeSure(playerBoard.getBoard());
-				cpHit = playerBoard.getHitoMiss(cpShoot.getR(), cpShoot.getC());
-				checkOpp = true;
-				if(cpHit){
-					dirFound = true;
-				}
-				else{
-					dirFound = false;
-				}				
-			}
-			else{
-				checkOpp = false;
-				while(!playerBoard.checkSpace(cpShoot.getR(), cpShoot.getC())){
-					cpShoot.shipSearch(playerBoard.getBoard());
-				}
-			}
-
-		}
-		else{
-			if(dirFound == false){
-				cpShoot.returnToCenter();
-				cpShoot.shipFound(playerBoard.getBoard());
-			}
-			else{
-				cpShoot.setDirNum(1);
-				cpShoot.dirFound(playerBoard.getBoard());
-			}
-		}
-
-
+	
+	public boolean getShotDone(){
+		return shotDone;
+	}
+	
+	public void showShot(){
+		pbutton[aiShoot.getRow()][aiShoot.getCol()].shotsFired();
+	}
+	
+	public void shootPlayer() {
+		playerBoard.hitORmiss(aiShoot.getRow(), aiShoot.getCol());
+		aiShoot.decideShotLoc();
 	}
 
 	public void updateGameState(){
