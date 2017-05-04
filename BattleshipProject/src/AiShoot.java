@@ -34,6 +34,16 @@ public class AiShoot {
 	}
 
 	public void decideShotLoc(){
+		/*if(doubleCheck && shipFound){
+			if(!playerBoard.getHitoMiss(row, col)){
+				dirFound = false;
+			}
+			else{
+				dirFound = true;
+			}
+		}*/
+		
+		System.out.println("\nborder:" + border);
 		if(border){
 			lastHit = false;
 			border = false;
@@ -43,25 +53,26 @@ public class AiShoot {
 		}
 		
 		if(dirFound && !lastHit){
+			resetTest();
 			shipFound = false;
 			dirFound = false;
 			doubleCheck = false;
 		}
-		
+		System.out.println("Going in:" + "\nlastRow:" + lastRow + "\nlastCol:" + lastCol + "\nrow:" + row + "\ncol:" + col + "\nlastHit:" + lastHit + "\nshipFound:" + shipFound + "\ndirFound:" + dirFound + "\ndoubleCheck:" + doubleCheck);
 		if(!lastHit && !shipFound && doubleCheck){
+			System.out.println("HIIII");
 			while(!playerBoard.checkSpace(row, col)){
-				setRowCol();
-			}	
+				setRowCol2();
+			}
 		}			
 		if(doubleCheck && (lastHit || shipFound)){
+			if(!shipFound){
+				setInitial();
+			}
 			shipFound = true;
-			if(lastHit && !dirFound){
-				dirFound = true;
-				resetTest();
+			
+			if(lastHit && !dirFound){			
 				testNextDirection();
-				if(!playerBoard.getHitoMiss(row, col)){
-					dirFound = false;
-				}
 			}
 			else if(!lastHit){
 				testNextDirection();
@@ -69,22 +80,36 @@ public class AiShoot {
 			else if(lastHit && dirFound){
 				finishHer();
 			}
+			
+			if(playerBoard.checkIsShip(row, col)){
+				dirFound = true;
+			}
+			else{
+				dirFound = false;
+			}
 		}
 		else if(!doubleCheck){
 			setToInitial();
 			changeDir();
 			finishHer();
 			doubleCheck = true;
-			if(playerBoard.checkSpace(row, col)){
-				if(playerBoard.getHitoMiss(row, col)){
-					dirFound = true;
-					shipFound = true;
-				}				
+			if(playerBoard.checkIsShip(row, col)){
+				dirFound = true;
+				shipFound = true;
 			}
 			else{
-				decideShotLoc();
+				if(!playerBoard.checkSpace(row, col)){
+					setRowCol2();
+				}				
 			}
 		}
+		
+		if(!playerBoard.checkSpace(row, col)){
+			while(!playerBoard.checkSpace(row, col)){
+				setRowCol2();
+			}
+		}
+		System.out.println("\nGoing out:" + "\nlastRow:" + lastRow + "\nlastCol:" + lastCol + "\nrow:" + row + "\ncol:" + col + "\nlastHit:" + lastHit + "\nshipFound:" + shipFound + "\ndirFound:" + dirFound + "\ndoubleCheck:" + doubleCheck);
 	}
 	
 	public void setCurrentHit(){
@@ -94,7 +119,7 @@ public class AiShoot {
 	public void setLastHit(){
 		lastRow = row;
 		lastCol = col;
-		lastHit = playerBoard.checkSpace(lastRow, lastCol);
+		lastHit = playerBoard.getHitoMiss(lastRow, lastCol);
 	}
 	
 	private void rowcolEven(){
@@ -112,7 +137,12 @@ public class AiShoot {
 			colEven = false;
 		}
 	}
-
+	
+	public void setRowCol2(){
+		row = rand.nextInt(10);
+		col = rand.nextInt(10);
+	}
+	
 	public void setRowCol(){
 		row = rand.nextInt(10);
 		col = rand.nextInt(10);
@@ -154,7 +184,6 @@ public class AiShoot {
 			setToInitial();
 			switch(test){
 			case 1:
-				setInitial();
 				row--;
 				test++;
 				dir = 'u';

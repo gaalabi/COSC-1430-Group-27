@@ -1,7 +1,7 @@
 public class GameBoard {
 
 	private int shipSize, shipType, shipNum, rowSize, colSize, valid, errorNum, arr[][];
-	private boolean hitomiss;
+	private boolean hitomiss, canHit, isShip;
 	private String ships[];
 	final private char topBar[]= {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 	final private int sideBar[]= {0,1,2,3,4,5,6,7,8,9};
@@ -24,6 +24,16 @@ public class GameBoard {
 			hitomiss = false;
 		}
 		return hitomiss;
+	}
+	
+	public boolean checkIsShip(int r, int c){
+		if(arr[r][c] != 0 && arr[r][c] != 9 && arr[r][c] != 8){
+			isShip = true;
+		}
+		else{
+			isShip = false;
+		}
+		return isShip;
 	}
 
 
@@ -74,6 +84,7 @@ public class GameBoard {
 			valid = 0;
 			errorNum = 0;
 			hitomiss = false;
+			isShip = false;
 			arr = new int[rowSize][colSize];
 		}
 
@@ -280,9 +291,7 @@ public class GameBoard {
 		}
 
 		public boolean checkSpace(int r, int c)// checks to see if space has been hit before (true if the space has not been hit before)
-		{
-			boolean canHit;
-			
+		{			
 			if(arr[r][c] == 8 || arr[r][c] == 9)
 				canHit = false;
 			else 
