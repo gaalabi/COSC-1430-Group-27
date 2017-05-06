@@ -17,6 +17,11 @@ public class GameBoard {
 	public int[][] getBoard(){ return arr; }
 	
 	public boolean getHitoMiss(int r, int c){
+		if(r >= 10 || r < 0 || c >= 10 || c < 0){
+			hitomiss = false;
+			return hitomiss;
+		}
+		
 		if(arr[r][c] == 9){
 			hitomiss = true;
 		}
@@ -291,7 +296,12 @@ public class GameBoard {
 		}
 
 		public boolean checkSpace(int r, int c)// checks to see if space has been hit before (true if the space has not been hit before)
-		{			
+		{
+			if(r >= 10 || r < 0 || c >= 10 || c < 0){
+				canHit = false;
+				return canHit;
+			}
+			
 			if(arr[r][c] == 8 || arr[r][c] == 9)
 				canHit = false;
 			else 

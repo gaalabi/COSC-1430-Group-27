@@ -116,6 +116,7 @@ public class GameWindow extends JFrame implements MouseWheelListener {
 	
 	public void shootPlayer() {
 		playerBoard.hitORmiss(aiShoot.getRow(), aiShoot.getCol());
+		updateGameState();
 		aiShoot.decideShotLoc();
 	}
 

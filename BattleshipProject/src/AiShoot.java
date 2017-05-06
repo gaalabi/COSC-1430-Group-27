@@ -1,7 +1,7 @@
 import java.util.Random;
 
 public class AiShoot {
-	private int row, col, initialRow, initialCol, row0, col0, test, lastRow, lastCol;
+	private int row, col, initialRow, initialCol, row0, col0, test, lastRow, lastCol, randNum;
 	private int[] dirNum;
 	private Random rand;
 	private boolean rowEven, colEven, currentHit, dirFound, lastHit, shipFound, doubleCheck, border;
@@ -16,10 +16,11 @@ public class AiShoot {
 		playerBoard = pBoard;
 		initialRow = 0;
 		initialCol = 0;
+		randNum = 0;
 		row0 = rand.nextInt(10);
 		col0 = rand.nextInt(10);
-		row = row0;
-		col = col0;
+		row = 5;//row0;
+		col = 5;//col0;
 		lastRow = row;
 		lastCol = col;
 		currentHit = false;
@@ -33,17 +34,8 @@ public class AiShoot {
 		rowcolEven();
 	}
 
-	public void decideShotLoc(){
-		/*if(doubleCheck && shipFound){
-			if(!playerBoard.getHitoMiss(row, col)){
-				dirFound = false;
-			}
-			else{
-				dirFound = true;
-			}
-		}*/
-		
-		System.out.println("\nborder:" + border);
+	public void decideShotLoc(){		
+		//System.out.println("\nborder:" + border);
 		if(border){
 			lastHit = false;
 			border = false;
@@ -58,19 +50,32 @@ public class AiShoot {
 			dirFound = false;
 			doubleCheck = false;
 		}
-		System.out.println("Going in:" + "\nlastRow:" + lastRow + "\nlastCol:" + lastCol + "\nrow:" + row + "\ncol:" + col + "\nlastHit:" + lastHit + "\nshipFound:" + shipFound + "\ndirFound:" + dirFound + "\ndoubleCheck:" + doubleCheck);
+		
+		if(lastHit && shipFound){
+			dirFound = true;
+		}
+		else{
+			dirFound = false;
+		}
+		
+		//System.out.println("Going in:" + "\nlastRow:" + lastRow + "\nlastCol:" + lastCol + "\nrow:" + row + "\ncol:" + col + "\nlastHit:" + lastHit + "\nshipFound:" + shipFound + "\ndirFound:" + dirFound + "\ndoubleCheck:" + doubleCheck);
 		if(!lastHit && !shipFound && doubleCheck){
-			System.out.println("HIIII");
-			while(!playerBoard.checkSpace(row, col)){
-				setRowCol2();
+			randNum = rand.nextInt(9)+1;
+			if(randNum <= 3){
+				while(!playerBoard.checkSpace(row, col)){
+					setRowCol2();
+				}
 			}
+			else{
+				setRowCol();
+			}			
 		}			
 		if(doubleCheck && (lastHit || shipFound)){
 			if(!shipFound){
 				setInitial();
 			}
 			shipFound = true;
-			
+
 			if(lastHit && !dirFound){			
 				testNextDirection();
 			}
@@ -79,13 +84,9 @@ public class AiShoot {
 			}
 			else if(lastHit && dirFound){
 				finishHer();
-			}
-			
-			if(playerBoard.checkIsShip(row, col)){
-				dirFound = true;
-			}
-			else{
-				dirFound = false;
+				if(!playerBoard.checkSpace(row, col)){
+					decideShotLoc();
+				}
 			}
 		}
 		else if(!doubleCheck){
@@ -103,25 +104,25 @@ public class AiShoot {
 				}				
 			}
 		}
-		
+
 		if(!playerBoard.checkSpace(row, col)){
 			while(!playerBoard.checkSpace(row, col)){
 				setRowCol2();
 			}
 		}
-		System.out.println("\nGoing out:" + "\nlastRow:" + lastRow + "\nlastCol:" + lastCol + "\nrow:" + row + "\ncol:" + col + "\nlastHit:" + lastHit + "\nshipFound:" + shipFound + "\ndirFound:" + dirFound + "\ndoubleCheck:" + doubleCheck);
+		//System.out.println("\nGoing out:" + "\nlastRow:" + lastRow + "\nlastCol:" + lastCol + "\nrow:" + row + "\ncol:" + col + "\nlastHit:" + lastHit + "\nshipFound:" + shipFound + "\ndirFound:" + dirFound + "\ndoubleCheck:" + doubleCheck);
 	}
-	
+
 	public void setCurrentHit(){
 		currentHit = playerBoard.getHitoMiss(row,col);
 	}
-	
+
 	public void setLastHit(){
 		lastRow = row;
 		lastCol = col;
 		lastHit = playerBoard.getHitoMiss(lastRow, lastCol);
 	}
-	
+
 	private void rowcolEven(){
 		if(row0%2 == 0){
 			rowEven = true;
@@ -137,12 +138,12 @@ public class AiShoot {
 			colEven = false;
 		}
 	}
-	
+
 	public void setRowCol2(){
 		row = rand.nextInt(10);
 		col = rand.nextInt(10);
 	}
-	
+
 	public void setRowCol(){
 		row = rand.nextInt(10);
 		col = rand.nextInt(10);
@@ -189,14 +190,14 @@ public class AiShoot {
 				dir = 'u';
 				break;
 			case 2:
-				row++;
-				test++;
-				dir = 'd';
-				break;
-			case 3:
 				col++;
 				test++;
 				dir = 'r';
+				break;
+			case 3:
+				row++;
+				test++;
+				dir = 'd';
 				break;
 			case 4:
 				col--;
@@ -206,7 +207,7 @@ public class AiShoot {
 			}
 		}while(row >= 10 || row < 0 || col >= 10 || col < 0);
 	}
-	
+
 	public void finishHer(){
 		switch(dir){
 		case 'u':
@@ -243,7 +244,7 @@ public class AiShoot {
 			break;
 		}
 	}
-	
+
 	public void changeDir(){
 		switch(dir){
 		case 'u':
@@ -260,7 +261,7 @@ public class AiShoot {
 			break;
 		}
 	}
-	
+
 	public void resetTest(){
 		test = 1;
 	}
